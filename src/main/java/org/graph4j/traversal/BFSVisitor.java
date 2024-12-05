@@ -54,7 +54,7 @@ public interface BFSVisitor {
 
     /**
      * A back edge vu is such that u is the ancestor of v, but vu is not a tree
-     * edge.
+     * edge. Back edges are specific to directed graphs.
      *
      * @param from a node in the BFS tree.
      * @param to a node in the BFS tree.

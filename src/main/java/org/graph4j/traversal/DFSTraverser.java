@@ -136,11 +136,15 @@ public class DFSTraverser {
                 if (visited[ui] == null) {
                     //the neighbor is not visited, add a tree edge
                     var next = new SearchNode(compIndex, u, node.level() + 1, orderIndex++, node);
+                    /*
+                    if (!visitor.isAcceptable(next)) {
+                        continue;
+                    }*/
+                    visitor.treeEdge(node, next);
+                    visitor.startVertex(next);
                     stack.push(next);
                     instack[ui] = true;
                     visited[ui] = next;
-                    visitor.treeEdge(node, next);
-                    visitor.startVertex(next);
                     ok = true;
                     break;
                 }

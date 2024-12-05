@@ -63,8 +63,8 @@ public class PrimMinimumSpanningTree extends MinimumSpanningTreeBase {
     @Override
     protected void compute() {
         int n = graph.numVertices();
-        this.weight = new double[n];
-        this.peer = new int[n];
+        this.weight = new double[n]; //beta
+        this.peer = new int[n]; //alpha
         this.solved = new boolean[n];
         int numSolved = 0;
         Arrays.fill(weight, Double.POSITIVE_INFINITY);

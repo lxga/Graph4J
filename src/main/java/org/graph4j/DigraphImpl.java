@@ -122,35 +122,49 @@ class DigraphImpl<V, E> extends GraphImpl<V, E> implements Digraph<V, E> {
     }
 
     @Override
+    protected void onAdjListPosChange(int vi, int wi, int pos) {
+        super.onAdjListPosChange(vi, wi, pos);
+        predPos[wi][predListPosOf(vertices[wi], vertices[vi])] = pos;
+    }
+
+    
+    @Override
     protected void removeEdgeAt(int vi, int pos) {
         int v = vertices[vi];
         int u = adjList[vi][pos];
-        int ui = indexOf(u);
-        super.removeEdgeAt(vi, pos); //removing the edge v -> u
-        //remove v from the predecessors of u
+        //removing the edge v -> u
+        //first, remove u from the successors (neighbors) of v
+        super.removeEdgeAt(vi, pos);
+
+        //second, remove v from the predecessors of u
         int posvu = predListPosOf(u, v);
+        int ui = indexOf(u);
         if (posvu < indegree[ui] - 1) {
             swapPredWithLast(ui, posvu);
         }
-        //decrease indegree of u
         indegree[ui]--;
+        assert indegree[ui] >= 0;
     }
 
     protected void swapPredWithLast(int vi, int pos) {
         int lastPos = indegree[vi] - 1;
         predList[vi][pos] = predList[vi][lastPos];
         predPos[vi][pos] = predPos[vi][lastPos];
-        //inform the vertex which was swapped of its current pos
-        /*
-        int w = predList[vi][pos];
-        int wi = indexOf(w);
-        if (wi != vi) {
-            if (!directed) {
-                adjPos[wi][adjPos[vi][pos]] = pos;
-            }
-        } else {
-            adjPos[wi][pos] = pos;
-        }*/
+    }
+
+    //incident from/to v
+    //Improve as a bulk operation
+    @Override
+    protected void removeAllEdgesAt(int vi) {
+        int v = vertices[vi];
+        for (var it = successorIterator(v); it.hasNext();) {
+            it.next();
+            it.removeEdge();
+        }
+        for (var it = predecessorIterator(v); it.hasNext();) {
+            it.next();
+            it.removeEdge();
+        }
     }
 
     //Returns the first position of u in the predecessor list of v.
@@ -214,7 +228,22 @@ class DigraphImpl<V, E> extends GraphImpl<V, E> implements Digraph<V, E> {
             predPos[vi] = new int[newLen];
         }
     }
-    
+
+    //when removing a vertex i
+    @Override
+    protected void swapVertexWithLast(int i) {
+        super.swapVertexWithLast(i);
+        int lastPos = numVertices - 1;
+        indegree[i] = indegree[lastPos];
+        //
+        predList[i] = predList[lastPos];
+        predList[lastPos] = null;
+        indegree[lastPos] = 0;
+        //
+        predPos[i] = predPos[lastPos];
+        predPos[lastPos] = null;
+    }
+
     @Override
     public Digraph<V, E> subgraph(VertexSet vertexSet) {
         return (Digraph<V, E>) super.subgraph(vertexSet);

@@ -187,6 +187,7 @@ public interface Digraph<V, E> extends Graph<V, E> {
      * @param v a vertex number.
      * @return the predecessors of v.
      */
+    //DigraphImpl overrides this
     default int[] predecessors(int v) {
         int[] pred = new int[indegree(v)];
         int k = 0;

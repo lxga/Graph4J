@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.StringJoiner;
 import org.graph4j.Graph;
+import org.graph4j.util.IntArrays;
 import org.graph4j.util.VertexSet;
 
 /**
@@ -224,7 +225,16 @@ public class Coloring {
             }
         }
     }
-    
+
+    /**
+     * Returns an array containing the colors of the vertices.
+     *
+     * @return an array containing the colors of the vertices.
+     */
+    public int[] getColors() {
+        return IntArrays.copyOf(vertexColor);
+    }
+
     /**
      * Returns the color assigned to a vertex v, or {@code -1} if no color has
      * been set.
@@ -425,15 +435,23 @@ public class Coloring {
     }
 
     /**
-     *
-     * @param vertices a set of vertices.
+     * @param vertexSet a set of vertices.
      * @return the distinct colors used by the given vertices.
      */
-    public Set<Integer> getColorsUsedBy(VertexSet vertices) {
+    public Set<Integer> getColorsUsedBy(VertexSet vertexSet) {
+        return getColorsUsedBy(vertexSet.vertices());
+    }
+
+    /**
+     * @param vertices an array of vertices.
+     * @return the distinct colors used by the given vertices.
+     */
+    public Set<Integer> getColorsUsedBy(int[] vertices) {
         Set<Integer> set = new HashSet<>();
         for (var v : vertices) {
-            if (isColorSet(v)) {
-                set.add(v);
+            int col = getColor(v);
+            if (col >= 0) {
+                set.add(col);
             }
         }
         return set;
@@ -454,7 +472,7 @@ public class Coloring {
     }
 
     @Override
-    public String toString() {                
+    public String toString() {
         var sb = new StringJoiner(",");
         for (int i = 0; i < vertexColor.length; i++) {
             int vc = vertexColor[i];
@@ -463,7 +481,7 @@ public class Coloring {
             }
         }
         return sb.toString() + "\n" + getColorClasses().toString();
-         
+
     }
 
     @Override

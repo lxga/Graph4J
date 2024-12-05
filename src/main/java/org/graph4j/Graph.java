@@ -446,8 +446,7 @@ public interface Graph<V, E> extends Weighted, Labeled<V, E> {
 
     /**
      * Removes all edges incident with a vertex. In case of digraphs, it removes
-     * all the edges incident from the vertex (having as source the specified
-     * vertex).
+     * all the edges incident from and to the vertex.
      *
      * @param v a vertex number.
      */
@@ -494,12 +493,13 @@ public interface Graph<V, E> extends Weighted, Labeled<V, E> {
      * incident to or from it.
      *
      * @param v a vertex number.
-     * @throws InvalidVertexException if the vertex is not in the graph.
+     * @throws InvalidVertexException if any of the vertices is not in the
+     * graph.
      */
     void removeVertex(int v);
 
     /**
-     * Convenience method for removing multiple vertices from the graph. It
+     * Convenience method for removing multiple vertices from the graph.It
      * invokes the {@link #removeVertex(int)} method for each vertex.
      *
      * @param vertices an array of vertex numbers.

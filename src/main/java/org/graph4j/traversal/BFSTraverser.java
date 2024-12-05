@@ -38,7 +38,7 @@ public class BFSTraverser {
     private BFSVisitor visitor;
     //
     private Queue<SearchNode> queue;
-    private boolean inqueue[];
+    //private boolean inqueue[];
     private int orderIndex;
     private int compIndex;
     private SearchNode visited[];
@@ -59,7 +59,7 @@ public class BFSTraverser {
         int n = graph.numVertices();
         this.visited = new SearchNode[n];
         this.queue = new LinkedList<>();
-        this.inqueue = new boolean[n];
+        //this.inqueue = new boolean[n];
         orderIndex = 0;
         compIndex = 0;
         maxLevel = -1;
@@ -99,7 +99,7 @@ public class BFSTraverser {
             var node = new SearchNode(compIndex, start, 0, orderIndex++, null);
             visited[graph.indexOf(start)] = node;
             queue.add(node);
-            inqueue[graph.indexOf(node.vertex())] = true;
+            //inqueue[graph.indexOf(node.vertex())] = true;
             //start traversing the first component, with the initial vertex
             bfs();
             for (int i = restartIndex, n = graph.numVertices(); i < n; i++) {
@@ -110,7 +110,7 @@ public class BFSTraverser {
                     node = new SearchNode(compIndex, graph.vertexAt(i), 0, orderIndex++, null);
                     visited[i] = node;
                     queue.add(node);
-                    inqueue[i] = true;
+                    //inqueue[i] = true;
                     bfs();
                 }
             }
@@ -126,7 +126,7 @@ public class BFSTraverser {
             var node = queue.poll();
             int v = node.vertex();
             int vi = graph.indexOf(v);
-            inqueue[vi] = false;
+            //inqueue[vi] = false;
             visitor.startVertex(node);
             if (maxLevel < node.level()) {
                 maxLevel = node.level();
@@ -139,28 +139,26 @@ public class BFSTraverser {
                     var child = new SearchNode(compIndex, u, node.level() + 1, orderIndex++, node);
                     visited[ui] = child;
                     queue.add(child);
-                    inqueue[ui] = true;
+                    //inqueue[ui] = true;
                     visitor.treeEdge(node, child);
                     leaf = false;
                 } else {
-                    //back edge or cross edge
+                    //back edge or cross edge: node - other
+                    //no forward edges, ignore in case of multigraphs
                     var other = visited[ui]; //already visited
                     if (other == node) {
-                        visitor.backEdge(node, other);
+                        visitor.backEdge(node, other); //self loop
                     } else if (other.equals(parent)) {
                         if (directed) {
-                            visitor.backEdge(node, other);
+                            visitor.backEdge(node, other); //back to parent
                         }
                     } else {
-                        if (inqueue[ui] && other.order() < node.order()) {
-                            //other.isAncestorOf(node)
+                        if (directed && other.isAncestorOf(node)) {
+                            //hotspot: isAncestorOf (how to optimize?)
+                            //no such thing as back edges for undirected graphs
                             visitor.backEdge(node, other);
                         } else {
-                            if (!directed || !(inqueue[vi] && node.order() < other.order())) {
-                                //!node.isAncestorOf(other)
-                                visitor.crossEdge(node, other);
-                            }
-                            //no forward edges, ignore in case of multigraphs
+                            visitor.crossEdge(node, other);
                         }
                     }
                 }

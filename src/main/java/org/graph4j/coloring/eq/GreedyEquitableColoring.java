@@ -25,6 +25,10 @@ import org.graph4j.coloring.Coloring;
 import org.graph4j.coloring.ColoringAlgorithm;
 
 /**
+ * Creates an equitable coloring in a greedy manner. The algorithm starts with a
+ * proper coloring and attempts at moving vertices from larger to smaller
+ * coloring classes, in order to make it equitable. When this is not possible,
+ * it creates a new coloring class.
  *
  * @author Cristian Frăsinaru
  */
@@ -74,6 +78,7 @@ public class GreedyEquitableColoring extends SimpleGraphAlgorithm
         //and move it in the smallest color class B
         //as long as A.size > B.size + 1
         while (true) {
+            //determine the largest and the smallest color classes
             int minSize = Integer.MAX_VALUE, maxSize = -1;
             List<Integer> maxCols = new ArrayList<>();
             List<Integer> minCols = new ArrayList<>();

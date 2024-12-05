@@ -61,6 +61,6 @@ public interface EquitableColoringAlgorithm extends ColoringAlgorithm {
      * @return the default implementation of this interface.
      */
     static ColoringAlgorithm getInstance(Graph graph) {
-        return new BacktrackEquitableColoring(graph);
+        return new GreedyEquitableColoring(graph);
     }
 }

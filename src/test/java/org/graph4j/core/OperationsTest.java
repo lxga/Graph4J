@@ -17,12 +17,16 @@
 package org.graph4j.core;
 
 import java.util.Arrays;
+import org.graph4j.Digraph;
+import org.graph4j.Graph;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import org.graph4j.GraphBuilder;
 import org.graph4j.GraphUtils;
 import org.graph4j.generators.CompleteGraphGenerator;
 import org.graph4j.generators.GraphGenerator;
+import org.graph4j.generators.RandomGnpGraphGenerator;
+import org.graph4j.util.IntArrays;
 import org.graph4j.util.VertexSet;
 
 /**
@@ -91,12 +95,12 @@ public class OperationsTest {
         g.addEdge(0, 1, 10);
         g.addEdge(0, 2, 20);
         g.addEdge(0, 3, 30);
-        g.contractVertices(1,2,3); //becomes 4
+        g.contractVertices(1, 2, 3); //becomes 4
         assertTrue(g.containsVertex(4));//new vertex
         assertEquals(2, g.numVertices()); //0-4
         assertEquals(60, g.getEdgeWeight(0, 4));
     }
-    
+
     @Test
     public void duplicateVertex() {
         int n = 5;
@@ -183,19 +187,19 @@ public class OperationsTest {
     public void supportWeightedMultigraph() {
         //cumulates weights
         var g = GraphBuilder.numVertices(4).buildMultigraph();
-        g.addEdge(0,1,10);
-        g.addEdge(0,1,10);
-        g.addEdge(0,1,10);
-        g.addEdge(0,2,10);
-        g.addEdge(0,2,10);
-        g.addEdge(0,3,10);        
+        g.addEdge(0, 1, 10);
+        g.addEdge(0, 1, 10);
+        g.addEdge(0, 1, 10);
+        g.addEdge(0, 2, 10);
+        g.addEdge(0, 2, 10);
+        g.addEdge(0, 3, 10);
         var support = g.supportGraph();
         assertEquals(3, support.numEdges());
-        assertEquals(30, support.getEdgeWeight(0, 1));        
-        assertEquals(20, support.getEdgeWeight(0, 2));        
-        assertEquals(10, support.getEdgeWeight(0, 3));        
+        assertEquals(30, support.getEdgeWeight(0, 1));
+        assertEquals(20, support.getEdgeWeight(0, 2));
+        assertEquals(10, support.getEdgeWeight(0, 3));
     }
-    
+
     @Test
     public void transpose() {
         var g = GraphBuilder.numVertices(4)
@@ -210,23 +214,25 @@ public class OperationsTest {
     }
 
     @Test
-    public void addRemove1() {
-        int n = 10;
-        var g = GraphGenerator.randomGnp(n, 0.5);
-        g.addVertex(n);
-        g.removeVertex(n);
-        g.addVertex(n);
-    }
-
-    @Test
-    public void addRemove2() {
-        int n = 10;
-        var g = GraphBuilder.numVertices(n).buildDigraph();
-        g.addVertex(n);
-        for (int i = 0; i < n - 1; i++) {
-            g.addEdge(n, i);
+    public void removeAllVerticesGraph() {
+        Graph g = new RandomGnpGraphGenerator(20, 0.5).createGraph();
+        int[] vertices = IntArrays.shuffle(g.vertices());
+        for (int v : vertices) {
+            g.removeVertex(v);
         }
-        g.removeVertex(n);
+        assertEquals(g.numEdges(), 0);
+        assertEquals(g.numVertices(), 0);
     }
-
+    
+    @Test
+    public void removeAllVerticesDigraph() {
+        Digraph d = new RandomGnpGraphGenerator(20, 0.5).createDigraph();
+        int[] vertices = IntArrays.shuffle(d.vertices());
+        for (int v : vertices) {
+            d.removeVertex(v);
+        }
+        assertEquals(d.numEdges(), 0);
+        assertEquals(d.numVertices(), 0);
+    }
+    
 }

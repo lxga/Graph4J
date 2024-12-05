@@ -263,6 +263,13 @@ public class CycleFinder extends GraphAlgorithm {
         Cycle cycle;
 
         @Override
+        public void startVertex(SearchNode node) {
+            if (target >= 0 && node.component() > 0) {
+                interrupt();
+            }
+        }
+        
+        @Override
         public void treeEdge(SearchNode from, SearchNode to) {
             //finding the cycle before backEdge
             //we look for the target and not wait for backEdge to reach it
@@ -308,7 +315,15 @@ public class CycleFinder extends GraphAlgorithm {
         //the root of the bfs tree is the targetNode
 
         @Override
+        public void startVertex(SearchNode node) {
+            if (target >= 0 && node.component() > 0) {
+                interrupt();
+            }
+        }
+        
+        @Override
         public void backEdge(SearchNode from, SearchNode to) {
+            //back edges are only for directed graphs
             if (target < 0 || to.vertex() == target) {
                 analyze(createCycleFromBackEdge(from, to));
             }
@@ -337,5 +352,4 @@ public class CycleFinder extends GraphAlgorithm {
         }
 
     }
-
 }

@@ -43,6 +43,18 @@ public interface DFSVisitor {
     }
 
     /**
+     * Invoked before continuing the exploration with the specified node.
+     *
+     * @param node a node in the DFS tree.
+     * @return {@code true} if the search should continue, {@code false}
+     * otherwise.
+     */
+    /*
+    default boolean isAcceptable(SearchNode node) {
+        return true;
+    }*/
+
+    /**
      * A tree edge is part of the DFS tree obtained after the DFS traversal.
      *
      * @param from a node in the DFS tree.

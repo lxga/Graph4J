@@ -456,10 +456,8 @@ class GraphImpl<V, E> implements Graph<V, E> {
             labelVertexMap.remove(vertexLabel[vi]);
         }
         //swap with the last pos
-        boolean isLastPos = vi == numVertices - 1;
-        //if (!isLastPos) {
+        boolean isLastPos = (vi == numVertices - 1);
         swapVertexWithLast(vi);
-        //}
         numVertices--;
         maxVertexNumber = null;
         //
@@ -676,6 +674,7 @@ class GraphImpl<V, E> implements Graph<V, E> {
         removeAllEdgesAt(vi);
     }
 
+    //incident from v
     protected void removeAllEdgesAt(int vi) {
         for (int pos = 0, deg = degree[vi]; pos < deg; pos++) {
             int u = adjList[vi][pos];
@@ -716,19 +715,16 @@ class GraphImpl<V, E> implements Graph<V, E> {
     protected void swapNeighborWithLast(int vi, int pos) {
         int lastPos = degree[vi] - 1;
         adjList[vi][pos] = adjList[vi][lastPos];
+        
+        //inform the vertex which was swapped of its current pos            
+        int w = adjList[vi][pos];
+        int wi = indexOf(w);
         if (adjPos != null) {
+            //in case of udirected graphs
             adjPos[vi][pos] = adjPos[vi][lastPos];
-            //inform the vertex which was swapped of its current pos
-            int w = adjList[vi][pos];
-            int wi = indexOf(w);
-            if (wi != vi) {
-                if (!directed) {
-                    adjPos[wi][adjPos[vi][pos]] = pos;
-                }
-            } else {
-                adjPos[wi][pos] = pos;
-            }
-        }
+        }    
+        onAdjListPosChange(vi, wi, pos); //override for directed
+        
         if (edgeData != null) {
             for (int k = 0; k < edgeData.length; k++) {
                 if (edgeData[k] != null) {
@@ -741,7 +737,19 @@ class GraphImpl<V, E> implements Graph<V, E> {
         }
     }
 
+    //in the adj list of v, w changed its position to pos
+    protected void onAdjListPosChange(int vi, int wi, int pos) {
+        if (wi != vi) {
+            if (!directed) {
+                adjPos[wi][adjPos[vi][pos]] = pos;
+            }
+        } else {
+            adjPos[wi][pos] = pos;
+        }
+    }
+
     //Returns the first position of u in the neighbor list of v.
+    @Override
     public int adjListPos(int v, int u) {
         int vi = indexOf(v);
         int deg = degree[vi];

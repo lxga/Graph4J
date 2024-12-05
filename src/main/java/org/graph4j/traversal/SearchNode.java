@@ -23,7 +23,7 @@ package org.graph4j.traversal;
  *
  * @author Cristian Frăsinaru
  */
-public class SearchNode  {
+public class SearchNode {
 
     private final int component;
     private final int vertex;
@@ -37,6 +37,16 @@ public class SearchNode  {
      */
     public SearchNode(int vertex) {
         this(0, vertex, 0, 0, null);
+    }
+
+    /**
+     * 
+     * @param vertex
+     * @param parent 
+     */
+    @Deprecated
+    SearchNode(int vertex, SearchNode parent) {
+        this(parent.component, vertex, parent.level + 1, parent.order + 1, parent);
     }
 
     /*
